@@ -13,6 +13,13 @@ app.get("/cpu", (req, res) => {
         message: "cpu intensive task"
     });
 });
+app.get("/user", async (req, res) => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    res.send({
+        name: "John Doe",
+        age: 25,
+    });
+});
 app.get("/users", (req, res) => {
     res.json({
         message: "users"
