@@ -1,27 +1,10 @@
 import express from "express";
 import client from "prom-client";
-const requestCounter = new client.Counter({
-    name: 'http_requests_total',
-    help: 'Total number of HTTP requests',
-    labelNames: ['method', 'route', 'status_code']
-});
-function middleware(req, res, next) {
-    const startTime = Date.now();
-    res.on('finish', () => {
-        const endTime = Date.now();
-        console.log(`Request took ${endTime - startTime}ms`);
-        // Increment request counter
-        requestCounter.inc({
-            method: req.method,
-            route: req.route ? req.route.path : req.path,
-            status_code: res.statusCode
-        });
-    });
-    next();
-}
-;
+import { middleware } from "./middleware.js";
+import { metricsMiddleware } from "./metrics/index.js";
 const app = express();
 app.use(middleware);
+app.use(metricsMiddleware);
 app.get("/cpu", (req, res) => {
     for (let i = 0; i < 100000000; i++) {
         Math.random();
